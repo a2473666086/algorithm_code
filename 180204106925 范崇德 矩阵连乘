@@ -1,0 +1,56 @@
+#include <iostream>
+using namespace std;
+
+#define NUM 51
+int p[NUM];         
+int m[NUM][NUM];   
+int s[NUM][NUM];    
+
+void MatrixChain(int n)
+{
+    for (int i = 1; i <= n; i++) m[i][i] = 0;
+    
+    for (int r = 2; r <= n; r++)                    
+        for (int i = 1; i <= n - r+1; i++)             
+        {
+            int j=i+r-1;                           
+            m[i][j] = m[i+1][j] + p[i-1]*p[i]*p[j];    
+            s[i][j] = i;
+            for (int k = i+1; k < j; k++) 
+            {
+                int t = m[i][k] + m[k+1][j] + p[i-1]*p[k]*p[j];
+                if (t < m[i][j]) { m[i][j] = t; s[i][j] = k;}
+            }
+        }
+}
+
+void TraceBack(int i, int j) 
+{ 
+    if(i==j)
+        cout<< "A" << i;
+    else 
+    {
+        cout << "(";
+        TraceBack(i, s[i][j]); 
+        TraceBack(s[i][j]+1, j); 
+        cout << ")"; 
+    }
+} 
+
+int main() 
+{
+    int n;
+    cout << "请输入矩阵的个数：";
+    cin >> n;                        
+    int temp;
+    for(int i = 0; i < n; i++){ 
+		cout << "输入矩阵的维数：";
+        cin >> p[i] >> temp;        
+	} 
+    p[n] = temp;
+    MatrixChain(n);
+    cout << "最优值为：";
+    cout << m[1][n] << endl;       
+    TraceBack(1, n);           
+    return 0;
+}
